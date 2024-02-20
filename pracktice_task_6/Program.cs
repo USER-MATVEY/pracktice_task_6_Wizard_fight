@@ -57,8 +57,9 @@ namespace pracktice_task_6
         private string name;
         private Random DamageRandom = new Random();
         private int maxDamage;
+        Boolean needOtherSpelToCast;                // TODO: include
         private string requaredSpelForCastThisSpel; // TODO: include
-        public string description;
+        public string description;                  // TODO: include
 
         public string Name { get { return name; } }
 
@@ -66,7 +67,6 @@ namespace pracktice_task_6
         {
             name = "puf";
             maxDamage = 6;
-            requaredSpelForCastThisSpel = "";
         }
 
         public Spel(string spelName, int spelDamage)
@@ -120,6 +120,7 @@ namespace pracktice_task_6
     {
         private int playerHp;
         public List<Spel> playerSpels;
+        private string lastCastedSpel;
 
         public int Hp { get { return playerHp; } set { playerHp = value; } }
 
@@ -127,6 +128,7 @@ namespace pracktice_task_6
         {
             playerHp = 50;
             playerSpels = new List<Spel>();
+            lastCastedSpel = "puf";
         }
 
         public void GetStartPlayerSpels(List<Spel> glSpelList)
@@ -160,6 +162,7 @@ namespace pracktice_task_6
                 {
                     boss.Hp -= playerSpels[i].CastSpell();
                     Console.WriteLine("Здоровье босса: " + boss.Hp);
+                    break;
                 }
             }
         }
