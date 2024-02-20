@@ -16,9 +16,23 @@ namespace pracktice_task_6
         {
             Player player = new Player();
             Boss boss = new Boss();
+            Boolean game = true;
+            Boolean turn = true;
 
-
-            //TODO ZA GAME
+            while (game)
+            {
+                if (turn)
+                {
+                    player.DoTurn();
+                    turn = false;
+                }   //TODO ZA GAME
+                else
+                {
+                    boss.DoTurn();
+                    turn = true;
+                }
+            }
+            
         }
     }
 
@@ -69,9 +83,9 @@ namespace pracktice_task_6
             return startBossSpels;
         }
 
-        public void BossCastSpel()
+        public void DoTurn()
         {
-            //TODO
+
         }
     }
 
@@ -88,11 +102,16 @@ namespace pracktice_task_6
 
         private List<Spel> GetStartPlayerSpels()
         {
-            List<Spel> playerStartSpels = new List<Spel>;
+            List<Spel> playerStartSpels = new List<Spel>();
 
             //TODO
 
             return playerStartSpels;
+        }
+
+        public void DoTurn()
+        {
+
         }
     }
 }
