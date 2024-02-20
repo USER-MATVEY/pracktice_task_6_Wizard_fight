@@ -5,11 +5,11 @@ namespace pracktice_task_6
 {
     class Program
     {
-        List<Spel> globalSpelsList = new List<Spel>()
+        static List<Spel> globalSpelsList = new List<Spel>()
         {
-            new Spel("magic Bolt", 10),
-            new Spel("magic Rocket", 30),
-            new Spel("magic spining Bolt", 20),
+            new Spel("magic bolt", 10),
+            new Spel("magic rocket", 30),
+            new Spel("magic spining bolt", 20),
         };
 
         static void Main(string[] args)
@@ -19,29 +19,48 @@ namespace pracktice_task_6
             Boolean game = true;
             Boolean turn = true;
 
+            player.GetStartPlayerSpels(globalSpelsList);
+            boss.GetStartBossSpels(globalSpelsList);
+
             while (game)
             {
+                if (player.Hp <= 0)
+                {
+                    Console.WriteLine("\n------------------------------------");
+                    Console.WriteLine("Вы погибли!!");
+                    break;
+                }
+
+                if (boss.Hp <= 0)
+                {
+                    Console.WriteLine("\n------------------------------------");
+                    Console.WriteLine("Вы Выйграли!!!");
+                    break;
+                }
+
                 if (turn)
                 {
-                    player.DoTurn();
+                    player.DoTurn(boss);
                     turn = false;
                 }   //TODO ZA GAME
                 else
                 {
-                    boss.DoTurn();
+                    boss.DoTurn(player);
                     turn = true;
                 }
             }
-            
         }
     }
 
     public class Spel
     {
         private string name;
-        private Random DamageRandom;
+        private Random DamageRandom = new Random();
         private int maxDamage;
-        private string requaredSpelForCastThisSpel; //TODO: include
+        private string requaredSpelForCastThisSpel; // TODO: include
+        public string description;
+
+        public string Name { get { return name; } }
 
         Spel()
         {
@@ -58,60 +77,91 @@ namespace pracktice_task_6
 
         public int CastSpell()
         {
-            return DamageRandom.Next(1, maxDamage);
+            int damage = DamageRandom.Next(1, maxDamage);
+            Console.WriteLine(name + " наносит " + damage + " урона.");
+            return damage;
         }
     }
 
     class Boss
     {
         private int bossHP;
-        private List<Spel> bossSpels;
+        public readonly List<Spel> bossSpels;
+
+        public int Hp { get { return bossHP; } set { bossHP = value; } }
 
         public Boss()
         {
             Random randomHP = new Random();
             bossHP = randomHP.Next(100, 200);
-            bossSpels = GetStartBossSpels();
+            bossSpels = new List<Spel>();
         }
 
-        private List<Spel> GetStartBossSpels()
+        public void GetStartBossSpels(List<Spel> glSpelList)
         {
+            Random randomSpel = new Random();
             List<Spel> startBossSpels = new List<Spel>();
 
-            //TODO
+            startBossSpels.Add(glSpelList[randomSpel.Next(glSpelList.Count)]);
+            startBossSpels.Add(glSpelList[randomSpel.Next(glSpelList.Count)]);
 
-            return startBossSpels;
+            bossSpels.AddRange(startBossSpels);
         }
 
-        public void DoTurn()
+        public void DoTurn(Player player)
         {
-
+            Random randSpel = new Random();
+            player.Hp -= bossSpels[randSpel.Next(bossSpels.Count)].CastSpell();
+            Console.WriteLine("Здоровье игрока: " + player.Hp);
         }
     }
 
     class Player
     {
         private int playerHp;
-        private List<Spel> playerSpels;
+        public List<Spel> playerSpels;
+
+        public int Hp { get { return playerHp; } set { playerHp = value; } }
 
         public Player()
         {
             playerHp = 50;
-            playerSpels = GetStartPlayerSpels();
+            playerSpels = new List<Spel>();
         }
 
-        private List<Spel> GetStartPlayerSpels()
+        public void GetStartPlayerSpels(List<Spel> glSpelList)
         {
+            Random randomSpel = new Random();
             List<Spel> playerStartSpels = new List<Spel>();
 
-            //TODO
+            playerStartSpels.Add(glSpelList[randomSpel.Next(glSpelList.Count)]);
+            playerStartSpels.Add(glSpelList[randomSpel.Next(glSpelList.Count)]);
 
-            return playerStartSpels;
+            playerSpels.AddRange(playerStartSpels);
         }
 
-        public void DoTurn()
+        private void PrintPlayerSpels()
         {
+            for(int i=0; i < playerSpels.Count; i++)
+            {
+                Console.WriteLine(playerSpels[i].Name);
+            }
+        }
 
+        public void DoTurn(Boss boss)
+        {
+            Console.WriteLine("Ваш ход.\nВыберите заклитнание для каста:");
+            PrintPlayerSpels();
+            string spelToCast = Console.ReadLine().ToLower();
+
+            for(int i=0; i < playerSpels.Count; i++)
+            {
+                if (playerSpels[i].Name == spelToCast)
+                {
+                    boss.Hp -= playerSpels[i].CastSpell();
+                    Console.WriteLine("Здоровье босса: " + boss.Hp);
+                }
+            }
         }
     }
 }
